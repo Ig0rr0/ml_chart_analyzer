@@ -37,6 +37,10 @@ class Point
      */
     private $predicted;
 
+	public function __construct() {
+		$this->setPredicted(false);
+	}
+
     public function getId(): ?int
     {
         return $this->id;

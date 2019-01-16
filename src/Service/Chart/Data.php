@@ -11,7 +11,7 @@ namespace App\Service\Chart;
 use App\Entity\Chart;
 use App\Entity\Point;
 use Flow\JSONPath\JSONPath;
-use Phpml\Classification\KNearestNeighbors;
+use Phpml\Regression\LeastSquares;
 
 
 final class Data implements DataInterface {
@@ -104,7 +104,7 @@ final class Data implements DataInterface {
 
 		$this->setChart($chart);
 
-		dump($chart);
+		//dump($chart);
 
 		return $chart;
 	}
@@ -144,8 +144,56 @@ final class Data implements DataInterface {
 		return $pieChart;
 	}
 
-	public function predictNextPoints(){
+	/**
+	 * @param int $number_of_points
+	 * @todo: optimize (!) important
+	 */
+	public function predictNextPoints($number_of_points=20){
 
+		$samples = [];
+		$labels = [];
+
+		$i=0;
+		foreach ($this->getChart()->getPoints()->filter(
+			function($entry) {
+				return $entry->getPredicted()===false;
+			}
+		)->toArray() as $point){
+			$samples[] = [$point->getXPosition()];
+			$labels[] = $point->getYPosition();
+
+			if($i>0 && isset($samples[($i-1)][0])){
+				$point_step = $samples[$i][0]-$samples[($i-1)][0];
+			}
+			$i++;
+		}
+
+		$last_x_position = $point->getXPosition();
+
+		$classifier = new LeastSquares();
+		$classifier->train($samples, $labels);
+
+		$samples_to_predict = [];
+
+		for ($predicted_point_id=1;$predicted_point_id<($number_of_points+1);$predicted_point_id++){
+			$new_sample = $last_x_position+$point_step*$predicted_point_id;
+			$samples_to_predict[] = [$new_sample];
+		}
+
+		$predicted_point_label = $classifier->predict($samples_to_predict);
+
+		$chart = $this->getChart();
+		foreach ($samples_to_predict as $sample_id=>$sample){
+			$point = new Point();
+			$point
+				->setXPosition($sample[0])
+				->setYPosition($predicted_point_label[$sample_id])
+				->setPredicted(true);
+
+			$chart->addPoint(
+				$point
+			);
+		}
 	}
 
 }

@@ -22,5 +22,6 @@ interface DataInterface {
 	public function getChart(): Chart;
 	public function setChart(Chart $chart);
 	public function loadChart(): Chart;
+	public function predictNextPoints();
 
 }

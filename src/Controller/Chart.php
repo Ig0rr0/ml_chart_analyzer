@@ -36,6 +36,8 @@ class Chart extends AbstractController {
 			//todo return form to complete
 		}
 
+		$service->predictNextPoints();
+
 		$pieChart = new LineChart();
 
 		$pieChart =
