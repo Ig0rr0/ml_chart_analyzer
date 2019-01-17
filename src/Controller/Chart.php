@@ -36,13 +36,20 @@ class Chart extends AbstractController
             $this->redirect('/');
         }
 
-        $service->setSource($form->getViewData()['source']);
-        $service->setTitle($form->getViewData()['chart_title']);
-        $service->setXPath($form->getViewData()['x_path']);
-        $service->setXName($form->getViewData()['x_name']);
-        $service->setYPath($form->getViewData()['y_path']);
-        $service->setYName($form->getViewData()['y_name']);
-        $service->setPredictedPointsCount($form->getViewData()['predicted_count']);
+
+	    try {
+	        $service->setSource($form->getViewData()['source']);
+	        $service->setTitle($form->getViewData()['chart_title']);
+	        $service->setXPath($form->getViewData()['x_path']);
+	        $service->setXName($form->getViewData()['x_name']);
+	        $service->setYPath($form->getViewData()['y_path']);
+	        $service->setYName($form->getViewData()['y_name']);
+	        $service->setPredictedPointsCount($form->getViewData()['predicted_count']);
+	    } catch (\ErrorException $exception) {
+		    return $this->render('chart/error.html.twig', [
+			    'message' => $exception->getMessage(),
+		    ]);
+	    }
 
         try {
             $chart = $service->loadChart();

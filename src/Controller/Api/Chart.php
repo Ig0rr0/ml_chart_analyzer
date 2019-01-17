@@ -36,13 +36,21 @@ final class Chart extends AbstractFOSRestController
             return $this->view($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $service->setSource($form->getViewData()['source']);
-        $service->setTitle($form->getViewData()['chart_title']);
-        $service->setXPath($form->getViewData()['x_path']);
-        $service->setXName($form->getViewData()['x_name']);
-        $service->setYPath($form->getViewData()['y_path']);
-        $service->setYName($form->getViewData()['y_name']);
-        $service->setPredictedPointsCount($form->getViewData()['predicted_count']);
+	    try {
+		    $service->setSource( $form->getViewData()['source'] );
+		    $service->setTitle( $form->getViewData()['chart_title'] );
+		    $service->setXPath( $form->getViewData()['x_path'] );
+		    $service->setXName( $form->getViewData()['x_name'] );
+		    $service->setYPath( $form->getViewData()['y_path'] );
+		    $service->setYName( $form->getViewData()['y_name'] );
+		    $service->setPredictedPointsCount( $form->getViewData()['predicted_count'] );
+	    } catch (\ErrorException $exception) {
+		    $response = [
+			    'error' => $exception->getMessage(),
+		    ];
+
+		    return $this->view($response, Response::HTTP_BAD_REQUEST);
+	    }
 
         try {
             $chart = $service->loadChart();
