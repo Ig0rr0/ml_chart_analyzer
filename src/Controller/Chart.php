@@ -17,6 +17,15 @@ use App\Service\Chart\Form\ImportData;
 
 class Chart extends AbstractController
 {
+    /**
+     * Puts data from request to service
+     * Defines chart view configuration.
+     *
+     * @param DataInterface $service
+     * @param Request       $request
+     *
+     * @return Response
+     */
     public function index(DataInterface $service, Request $request): Response
     {
         $form = $this->createForm(ImportData::class);
@@ -38,14 +47,10 @@ class Chart extends AbstractController
         try {
             $chart = $service->loadChart();
         } catch (\Exception $exception) {
-
-	        return $this->render('chart/error.html.twig', [
-		        'message' => $exception->getMessage(),
-	        ]);
-
+            return $this->render('chart/error.html.twig', [
+                'message' => $exception->getMessage(),
+            ]);
         }
-
-        //todo: if empty
 
         $service->predictNextPoints();
 

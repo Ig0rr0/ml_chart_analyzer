@@ -130,9 +130,9 @@ final class Data implements DataInterface
         $chart->sortPointsByX();
         $this->setChart($chart);
 
-	    if($chart->getPoints()->count()<2){
-		    throw new \Exception('There are no points in chart');
-	    }
+        if ($chart->getPoints()->count() < 2) {
+            throw new \Exception('There are no points in chart');
+        }
 
         //dump($chart);
 
@@ -203,9 +203,9 @@ final class Data implements DataInterface
 
         $i = 0;
 
-	    if($this->getChart()->getPoints()->count()<2){
-		    throw new \Exception('There are no points in chart');
-	    }
+        if ($this->getChart()->getPoints()->count() < 2) {
+            throw new \Exception('There are no points in chart');
+        }
 
         foreach ($this->getChart()->getPoints()->filter(
             function ($entry) {
