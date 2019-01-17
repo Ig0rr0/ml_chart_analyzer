@@ -10,6 +10,8 @@ This is a diploma for iTea PHP Advanced courses. it:
 * demonstrating the basic usage of machine learning in PHP
 * useful tool to build chart with prognose
 
+![PHP-ML logo](public/images/Json2Chart.jpg)
+
 # PHP Ai engines
 
 * PHP-ML || FANN ?
