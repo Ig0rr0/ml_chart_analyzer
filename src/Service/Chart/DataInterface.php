@@ -23,5 +23,6 @@ interface DataInterface {
 	public function setChart(Chart $chart);
 	public function loadChart(): Chart;
 	public function predictNextPoints();
+	public function setPredictedPointsCount(int $count);
 
 }

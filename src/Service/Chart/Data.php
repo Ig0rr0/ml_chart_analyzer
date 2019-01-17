@@ -20,6 +20,21 @@ final class Data implements DataInterface {
 	private $x_path;
 	private $y_path;
 	private $chart;
+	private $predicted_points_count;
+
+	/**
+	 * @return mixed
+	 */
+	public function getPredictedPointsCount() {
+		return $this->predicted_points_count;
+	}
+
+	/**
+	 * @param mixed $predicted_points_count
+	 */
+	public function setPredictedPointsCount( int $predicted_points_count ): void {
+		$this->predicted_points_count = $predicted_points_count;
+	}
 
 	public function getChart(): Chart {
 		return $this->chart;
@@ -123,14 +138,32 @@ final class Data implements DataInterface {
 
 		$chart_array[] = [
 			$this->x_name,
-			$this->y_name
+			$this->y_name,
+			$this->y_name.' (prognosed)'
 		];
 
-		foreach ($this->getChart()->getPoints()->toArray() as $point){
+		foreach ($this->getChart()->getPoints()->filter(
+			function($entry) {
+				return $entry->getPredicted()===false;
+			}
+		)->toArray() as $point){
 			$chart_array[]=[
 					0=>$point->getXPosition(),
-					1=>$point->getYPosition()
+					1=>$point->getYPosition(),
+					2=>0
 				];
+		}
+
+		foreach ($this->getChart()->getPoints()->filter(
+			function($entry) {
+				return $entry->getPredicted()===true;
+			}
+		)->toArray() as $point){
+			$chart_array[]=[
+				0=>$point->getXPosition(),
+				1=>0,
+				2=>$point->getYPosition()
+			];
 		}
 
 		$pieChart->getOptions()->setTitle($this->title);
@@ -138,17 +171,16 @@ final class Data implements DataInterface {
 				$chart_array
 		);
 
-		$pieChart->getOptions()->setSeries([['axis' => $this->y_name]]);
-		$pieChart->getOptions()->setVAxes(['y' => [$this->y_name => ['label' =>$this->y_name]]]);
+		$pieChart->getOptions()->setSeries([['axis' => $this->y_name],['axis' => $this->y_name.' (prognosed)']]);
+		$pieChart->getOptions()->setVAxes(['y' => [$this->y_name => ['label' =>$this->y_name],$this->y_name.' (prognosed)' => ['label' =>$this->y_name]]]);
 
 		return $pieChart;
 	}
 
 	/**
-	 * @param int $number_of_points
 	 * @todo: optimize (!) important
 	 */
-	public function predictNextPoints($number_of_points=20){
+	public function predictNextPoints(){
 
 		$samples = [];
 		$labels = [];
@@ -163,10 +195,12 @@ final class Data implements DataInterface {
 			$labels[] = $point->getYPosition();
 
 			if($i>0 && isset($samples[($i-1)][0])){
-				$point_step = $samples[$i][0]-$samples[($i-1)][0];
+				$point_step = abs($samples[$i][0]-$samples[($i-1)][0]);
 			}
 			$i++;
 		}
+
+		//todo; get step by min max
 
 		$last_x_position = $point->getXPosition();
 
@@ -175,7 +209,7 @@ final class Data implements DataInterface {
 
 		$samples_to_predict = [];
 
-		for ($predicted_point_id=1;$predicted_point_id<($number_of_points+1);$predicted_point_id++){
+		for ($predicted_point_id=1;$predicted_point_id<($this->predicted_points_count+1);$predicted_point_id++){
 			$new_sample = $last_x_position+$point_step*$predicted_point_id;
 			$samples_to_predict[] = [$new_sample];
 		}

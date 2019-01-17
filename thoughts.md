@@ -40,6 +40,7 @@ This is a diploma for iTea PHP Advanced courses.
 * https://github.com/cmen/CMENGoogleChartsBundle/blob/master/Resources/doc/cookbook.md
 * https://packagist.org/packages/flow/jsonpath
 * https://www.glohbe.de/en/stockprice-prediction-with-ai-in-php/
+* https://github.com/cmen/CMENGoogleChartsBundle/blob/master/Resources/doc/cookbook.md
 
 # TODO:
 

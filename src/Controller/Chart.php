@@ -9,24 +9,32 @@
 namespace App\Controller;
 
 use App\Service\Chart\DataInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\LineChart;
+use App\Service\Chart\Form\ImportData;
 
 
 class Chart extends AbstractController {
 
-	public function index(DataInterface $service) : Response
+	public function index(DataInterface $service, Request $request) : Response
 	{
+		$form = $this->createForm(ImportData::class);
+		$form->handleRequest($request);
 
-		// 1. set source
-		$source = 'https://eth.nanopool.org/api/v1/price_history/0/768';
-		$service->setSource($source);
-		$service->setTitle('Ethereum price prognose');
-		$service->setXPath('$.data.*.time');
-		$service->setXName('Time');
-		$service->setYPath('$.data.*.price');
-		$service->setYName('Name');
+		if (!$form->isSubmitted() || !$form->isValid()) {
+			$this->addFlash('failure', 'Some data missing');
+			$this->redirect('/');
+		}
+
+		$service->setSource($form->getViewData()['source']);
+		$service->setTitle($form->getViewData()['chart_title']);
+		$service->setXPath($form->getViewData()['x_path']);
+		$service->setXName($form->getViewData()['x_name']);
+		$service->setYPath($form->getViewData()['y_path']);
+		$service->setYName($form->getViewData()['y_name']);
+		$service->setPredictedPointsCount($form->getViewData()['predicted_count']);
 
 		try{
 			$chart = $service->loadChart();
@@ -35,6 +43,8 @@ class Chart extends AbstractController {
 			die();
 			//todo return form to complete
 		}
+
+		//todo: if empty
 
 		$service->predictNextPoints();
 

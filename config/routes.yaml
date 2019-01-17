@@ -1,6 +1,6 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
-train:
+index:
+    path: /
+    controller: App\Controller\Home::index
+chart:
     path: /chart/
     controller: App\Controller\Chart::index
