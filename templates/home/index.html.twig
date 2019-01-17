@@ -229,6 +229,17 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-10">
+                <p>
+                    There are some api PSOT methods to get data:
+                    POST Headers required: import_data[source, chart_title, x_name, y_name, , x_path, y_path, predicted_count]
+                </p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">POST http://127.0.0.1:8000/api/chart/get_points</li>
+                </ul>
+            </div>
+        </div>
     </div>
     {#
     {{ form_start(form) }}
