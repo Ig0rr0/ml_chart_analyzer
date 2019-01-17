@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Igorro
  * Date: 09.01.2019
- * Time: 18:53
+ * Time: 18:53.
  */
 
 namespace App\Controller;
@@ -15,55 +15,53 @@ use Symfony\Component\HttpFoundation\Response;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\LineChart;
 use App\Service\Chart\Form\ImportData;
 
+class Chart extends AbstractController
+{
+    public function index(DataInterface $service, Request $request): Response
+    {
+        $form = $this->createForm(ImportData::class);
+        $form->handleRequest($request);
 
-class Chart extends AbstractController {
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            $this->addFlash('failure', 'Some data missing');
+            $this->redirect('/');
+        }
 
-	public function index(DataInterface $service, Request $request) : Response
-	{
-		$form = $this->createForm(ImportData::class);
-		$form->handleRequest($request);
+        $service->setSource($form->getViewData()['source']);
+        $service->setTitle($form->getViewData()['chart_title']);
+        $service->setXPath($form->getViewData()['x_path']);
+        $service->setXName($form->getViewData()['x_name']);
+        $service->setYPath($form->getViewData()['y_path']);
+        $service->setYName($form->getViewData()['y_name']);
+        $service->setPredictedPointsCount($form->getViewData()['predicted_count']);
 
-		if (!$form->isSubmitted() || !$form->isValid()) {
-			$this->addFlash('failure', 'Some data missing');
-			$this->redirect('/');
-		}
+        try {
+            $chart = $service->loadChart();
+        } catch (\Exception $exception) {
+            dump($exception->getMessage());
+            die();
+            //todo return form to complete
+        }
 
-		$service->setSource($form->getViewData()['source']);
-		$service->setTitle($form->getViewData()['chart_title']);
-		$service->setXPath($form->getViewData()['x_path']);
-		$service->setXName($form->getViewData()['x_name']);
-		$service->setYPath($form->getViewData()['y_path']);
-		$service->setYName($form->getViewData()['y_name']);
-		$service->setPredictedPointsCount($form->getViewData()['predicted_count']);
+        //todo: if empty
 
-		try{
-			$chart = $service->loadChart();
-		} catch (\Exception $exception){
-			dump($exception->getMessage());
-			die();
-			//todo return form to complete
-		}
+        $service->predictNextPoints();
 
-		//todo: if empty
+        $pieChart = new LineChart();
 
-		$service->predictNextPoints();
+        $pieChart =
+            $service->importPieChart($pieChart);
 
-		$pieChart = new LineChart();
+        $pieChart->getOptions()->setHeight(500);
+        $pieChart->getOptions()->setWidth(900);
+        $pieChart->getOptions()->getTitleTextStyle()->setBold(true);
+        $pieChart->getOptions()->getTitleTextStyle()->setColor('#009900');
+        $pieChart->getOptions()->getTitleTextStyle()->setItalic(true);
+        $pieChart->getOptions()->getTitleTextStyle()->setFontName('Arial');
+        $pieChart->getOptions()->getTitleTextStyle()->setFontSize(20);
 
-		$pieChart =
-			$service->importPieChart($pieChart);
-
-		$pieChart->getOptions()->setHeight(500);
-		$pieChart->getOptions()->setWidth(900);
-		$pieChart->getOptions()->getTitleTextStyle()->setBold(true);
-		$pieChart->getOptions()->getTitleTextStyle()->setColor('#009900');
-		$pieChart->getOptions()->getTitleTextStyle()->setItalic(true);
-		$pieChart->getOptions()->getTitleTextStyle()->setFontName('Arial');
-		$pieChart->getOptions()->getTitleTextStyle()->setFontSize(20);
-
-		return $this->render('chart/view.html.twig', [
-			'piechart' => $pieChart
-		]);
-	}
-
+        return $this->render('chart/view.html.twig', [
+            'piechart' => $pieChart,
+        ]);
+    }
 }

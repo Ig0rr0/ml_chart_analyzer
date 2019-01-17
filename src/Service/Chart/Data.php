@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Igorro
  * Date: 15.01.2019
- * Time: 18:15
+ * Time: 18:15.
  */
 
 namespace App\Service\Chart;
@@ -13,221 +13,231 @@ use App\Entity\Point;
 use Flow\JSONPath\JSONPath;
 use Phpml\Regression\LeastSquares;
 
+final class Data implements DataInterface
+{
+    private $source;
+    private $title;
+    private $x_path;
+    private $y_path;
+    private $chart;
+    private $predicted_points_count;
 
-final class Data implements DataInterface {
-	private $source;
-	private $title;
-	private $x_path;
-	private $y_path;
-	private $chart;
-	private $predicted_points_count;
+    /**
+     * @return mixed
+     */
+    public function getPredictedPointsCount()
+    {
+        return $this->predicted_points_count;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getPredictedPointsCount() {
-		return $this->predicted_points_count;
-	}
+    /**
+     * @param mixed $predicted_points_count
+     */
+    public function setPredictedPointsCount(int $predicted_points_count): void
+    {
+        $this->predicted_points_count = $predicted_points_count;
+    }
 
-	/**
-	 * @param mixed $predicted_points_count
-	 */
-	public function setPredictedPointsCount( int $predicted_points_count ): void {
-		$this->predicted_points_count = $predicted_points_count;
-	}
+    public function getChart(): Chart
+    {
+        return $this->chart;
+    }
 
-	public function getChart(): Chart {
-		return $this->chart;
-	}
+    public function setChart(Chart $chart): void
+    {
+        $this->chart = $chart;
+    }
 
-	public function setChart( Chart $chart ): void {
-		$this->chart = $chart;
-	}
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
 
-	public function setTitle( string $title ): void {
-		$this->title = $title;
-	}
-	private $x_name;
-	private $y_name;
+    private $x_name;
+    private $y_name;
 
-	public function setSource( string $source ) {
-		$this->source=$source;
-	}
+    public function setSource(string $source)
+    {
+        $this->source = $source;
+    }
 
-	public function setXPath( string $x_path ): void {
-		$this->x_path = $x_path;
-	}
+    public function setXPath(string $x_path): void
+    {
+        $this->x_path = $x_path;
+    }
 
-	public function setYPath( string $y_path ): void {
-		$this->y_path = $y_path;
-	}
+    public function setYPath(string $y_path): void
+    {
+        $this->y_path = $y_path;
+    }
 
-	public function setXName( string $x_name ): void {
-		$this->x_name = $x_name;
-	}
+    public function setXName(string $x_name): void
+    {
+        $this->x_name = $x_name;
+    }
 
-	public function setYName( string $y_name ): void {
-		$this->y_name = $y_name;
-	}
+    public function setYName(string $y_name): void
+    {
+        $this->y_name = $y_name;
+    }
 
-	/**
-	 * @return Chart
-	 * @throws \Flow\JSONPath\JSONPathException
-	 * @todo new chart
-	 * @todo throw non-declared prop exception
-	 * Creates a chart with data from set outter source Json
-	 *
-	 */
-	public function loadChart(): Chart {
+    /**
+     * @return Chart
+     *
+     * @throws \Flow\JSONPath\JSONPathException
+     *
+     * @todo new chart
+     * @todo throw non-declared prop exception
+     * Creates a chart with data from set outter source Json
+     */
+    public function loadChart(): Chart
+    {
+        $necessary_params = [
+            'source',
+            'title',
+            'x_path',
+            'x_name',
+            'y_path',
+            'y_name',
+        ];
 
-		$necessary_params = [
-			'source',
-			'title',
-			'x_path',
-			'x_name',
-			'y_path',
-			'y_name'
-		];
+        foreach ($necessary_params as $necessary_param) {
+            if (empty($this->$necessary_param)) {
+                throw new \Exception($necessary_param.' must be declared');
+            }
+        }
 
-		foreach ($necessary_params as $necessary_param) {
-			if ( empty( $this->$necessary_param ) ) {
-				throw new \Exception( $necessary_param.' must be declared' );
-			}
-		}
+        $data = file_get_contents($this->source);
+        $json_data = json_decode($data);
+        $json_path = new JSONPath($json_data);
 
-		$data = file_get_contents($this->source);
-		$json_data = json_decode($data);
-		$json_path = new JSONPath($json_data);
+        $x_data = $json_path->find($this->x_path);
+        $y_data = $json_path->find($this->y_path);
 
-		$x_data = $json_path->find($this->x_path);
-		$y_data = $json_path->find($this->y_path);
+        $chart = new Chart();
 
-		$chart = new Chart();
+        foreach ($x_data as $i => $x_row) {
+            $point = new Point();
+            $point
+                ->setXPosition($x_data[$i])
+                ->setYPosition($y_data[$i]);
 
-		foreach ($x_data as $i=>$x_row) {
+            $chart->addPoint(
+                $point
+            );
+        }
 
-			$point = new Point();
-			$point
-				->setXPosition($x_data[$i])
-				->setYPosition($y_data[$i]);
+        $chart->sortPointsByX();
+        $this->setChart($chart);
 
-			$chart->addPoint(
-				$point
-			);
+        //dump($chart);
 
-		}
+        return $chart;
+    }
 
-		$chart->sortPointsByX();
-		$this->setChart($chart);
+    /**
+     * @param Chart    $chart
+     * @param PieChart $pieChart
+     *                           Convert Chaert to PieChart
+     *
+     * @todo to Dto
+     *
+     * @return PieChart
+     */
+    public function importPieChart($pieChart)
+    {
+        $chart_array = [];
 
-		//dump($chart);
+        $chart_array[] = [
+            $this->x_name,
+            $this->y_name,
+            $this->y_name.' (prognosed)',
+        ];
 
-		return $chart;
-	}
+        foreach ($this->getChart()->getPoints()->filter(
+            function ($entry) {
+                return false === $entry->getPredicted();
+            }
+        )->toArray() as $point) {
+            $chart_array[] = [
+                    0 => $point->getXPosition(),
+                    1 => $point->getYPosition(),
+                    2 => 0,
+                ];
+        }
 
-	/**
-	 * @param Chart $chart
-	 * @param PieChart $pieChart
-	 * Convert Chaert to PieChart
-	 * @todo to Dto
-	 * @return PieChart
-	 */
-	public function importPieChart($pieChart)
-	{
+        foreach ($this->getChart()->getPoints()->filter(
+            function ($entry) {
+                return true === $entry->getPredicted();
+            }
+        )->toArray() as $point) {
+            $chart_array[] = [
+                0 => $point->getXPosition(),
+                1 => 0,
+                2 => $point->getYPosition(),
+            ];
+        }
 
-		$chart_array = [];
+        $pieChart->getOptions()->setTitle($this->title);
+        $pieChart->getData()->setArrayToDataTable(
+                $chart_array
+        );
 
-		$chart_array[] = [
-			$this->x_name,
-			$this->y_name,
-			$this->y_name.' (prognosed)'
-		];
+        $pieChart->getOptions()->setSeries([['axis' => $this->y_name], ['axis' => $this->y_name.' (prognosed)']]);
+        $pieChart->getOptions()->setVAxes(['y' => [$this->y_name => ['label' => $this->y_name], $this->y_name.' (prognosed)' => ['label' => $this->y_name]]]);
 
-		foreach ($this->getChart()->getPoints()->filter(
-			function($entry) {
-				return $entry->getPredicted()===false;
-			}
-		)->toArray() as $point){
-			$chart_array[]=[
-					0=>$point->getXPosition(),
-					1=>$point->getYPosition(),
-					2=>0
-				];
-		}
+        return $pieChart;
+    }
 
-		foreach ($this->getChart()->getPoints()->filter(
-			function($entry) {
-				return $entry->getPredicted()===true;
-			}
-		)->toArray() as $point){
-			$chart_array[]=[
-				0=>$point->getXPosition(),
-				1=>0,
-				2=>$point->getYPosition()
-			];
-		}
+    /**
+     * @todo: optimize (!) important
+     */
+    public function predictNextPoints()
+    {
+        $samples = [];
+        $labels = [];
 
-		$pieChart->getOptions()->setTitle($this->title);
-		$pieChart->getData()->setArrayToDataTable(
-				$chart_array
-		);
+        $i = 0;
+        foreach ($this->getChart()->getPoints()->filter(
+            function ($entry) {
+                return false === $entry->getPredicted();
+            }
+        )->toArray() as $point) {
+            $samples[] = [$point->getXPosition()];
+            $labels[] = $point->getYPosition();
+            if (0 == $i) {
+                $first_x_position = $point->getXPosition();
+            }
+            ++$i;
+        }
 
-		$pieChart->getOptions()->setSeries([['axis' => $this->y_name],['axis' => $this->y_name.' (prognosed)']]);
-		$pieChart->getOptions()->setVAxes(['y' => [$this->y_name => ['label' =>$this->y_name],$this->y_name.' (prognosed)' => ['label' =>$this->y_name]]]);
+        $last_x_position = $point->getXPosition();
 
-		return $pieChart;
-	}
+        $point_step = abs($last_x_position - $first_x_position) / $i;
 
-	/**
-	 * @todo: optimize (!) important
-	 */
-	public function predictNextPoints(){
+        $classifier = new LeastSquares();
+        $classifier->train($samples, $labels);
 
-		$samples = [];
-		$labels = [];
+        $samples_to_predict = [];
 
-		$i=0;
-		foreach ($this->getChart()->getPoints()->filter(
-			function($entry) {
-				return $entry->getPredicted()===false;
-			}
-		)->toArray() as $point){
-			$samples[] = [$point->getXPosition()];
-			$labels[] = $point->getYPosition();
-			if($i==0){
-				$first_x_position = $point->getXPosition();
-			}
-			$i++;
-		}
+        for ($predicted_point_id = 1; $predicted_point_id < ($this->predicted_points_count + 1); ++$predicted_point_id) {
+            $new_sample = $last_x_position + $point_step * $predicted_point_id;
+            $samples_to_predict[] = [$new_sample];
+        }
 
-		$last_x_position = $point->getXPosition();
+        $predicted_point_label = $classifier->predict($samples_to_predict);
 
-		$point_step = abs($last_x_position-$first_x_position)/$i;
+        $chart = $this->getChart();
+        foreach ($samples_to_predict as $sample_id => $sample) {
+            $point = new Point();
+            $point
+                ->setXPosition($sample[0])
+                ->setYPosition($predicted_point_label[$sample_id])
+                ->setPredicted(true);
 
-		$classifier = new LeastSquares();
-		$classifier->train($samples, $labels);
-
-		$samples_to_predict = [];
-
-		for ($predicted_point_id=1;$predicted_point_id<($this->predicted_points_count+1);$predicted_point_id++){
-			$new_sample = $last_x_position+$point_step*$predicted_point_id;
-			$samples_to_predict[] = [$new_sample];
-		}
-
-		$predicted_point_label = $classifier->predict($samples_to_predict);
-
-		$chart = $this->getChart();
-		foreach ($samples_to_predict as $sample_id=>$sample){
-			$point = new Point();
-			$point
-				->setXPosition($sample[0])
-				->setYPosition($predicted_point_label[$sample_id])
-				->setPredicted(true);
-
-			$chart->addPoint(
-				$point
-			);
-		}
-	}
-
+            $chart->addPoint(
+                $point
+            );
+        }
+    }
 }

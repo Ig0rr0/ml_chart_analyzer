@@ -83,12 +83,13 @@ class Chart
         return $this;
     }
 
-    public function sortPointsByX(){
-	    $iterator = $this->points->getIterator();
-	    $iterator->uasort(function ($a, $b) {
-			    return ($a->getXPosition() < $b->getXPosition()) ? -1 : 1;
-		    });
-	    $this->points = new ArrayCollection(iterator_to_array($iterator));
+    public function sortPointsByX()
+    {
+        $iterator = $this->points->getIterator();
+        $iterator->uasort(function ($a, $b) {
+            return ($a->getXPosition() < $b->getXPosition()) ? -1 : 1;
+        });
+        $this->points = new ArrayCollection(iterator_to_array($iterator));
     }
 
     public function removePoint(Point $point): self
