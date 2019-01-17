@@ -38,9 +38,11 @@ class Chart extends AbstractController
         try {
             $chart = $service->loadChart();
         } catch (\Exception $exception) {
-            dump($exception->getMessage());
-            die();
-            //todo return form to complete
+
+	        return $this->render('chart/error.html.twig', [
+		        'message' => $exception->getMessage(),
+	        ]);
+
         }
 
         //todo: if empty

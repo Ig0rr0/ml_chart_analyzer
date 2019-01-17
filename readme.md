@@ -48,6 +48,7 @@ This is a diploma for iTea PHP Advanced courses. it:
 * https://developers.google.com/chart/interactive/docs/gallery/linechart?csw=1
 * https://packagist.org/packages/cmen/google-charts-bundle
 * https://github.com/cmen/CMENGoogleChartsBundle/blob/master/Resources/doc/cookbook.md
+* https://canvasjs.com/jsp-charts/
 
 ##Json
 

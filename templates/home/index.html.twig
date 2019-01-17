@@ -124,7 +124,6 @@
                                     {{ form_widget(form.source, {'attr':
                                         {
                                             'class': 'form-control',
-                                            'value': 'https://eth.nanopool.org/api/v1/price_history/0/768',
                                             'placeholder': 'Url Source'
                                         }})
                                     }}
@@ -136,7 +135,6 @@
                                     {{ form_widget(form.chart_title, {'attr':
                                         {
                                             'class': 'form-control',
-                                            'value': 'Ethereum price ',
                                             'placeholder': 'Chart title'
                                         }})
                                     }}
@@ -152,7 +150,6 @@
                                     {{ form_widget(form.x_name, {'attr':
                                         {
                                             'class': 'form-control',
-                                            'value': 'Time period',
                                             'placeholder': 'name of X-axis'
                                         }})
                                     }}
@@ -164,7 +161,6 @@
                                     {{ form_widget(form.y_name, {'attr':
                                         {
                                             'class': 'form-control',
-                                            'value': 'Price value',
                                             'placeholder': 'name of Y-axis'
                                         }})
                                     }}
@@ -178,7 +174,6 @@
                                     {{ form_widget(form.x_path, {'attr':
                                         {
                                             'class': 'form-control',
-                                            'value': '$.data.*.time',
                                             'placeholder': 'json path for x-axis'
                                         }})
                                     }}
@@ -190,7 +185,6 @@
                                     {{ form_widget(form.y_path, {'attr':
                                         {
                                             'class': 'form-control',
-                                            'value': '$.data.*.price',
                                             'placeholder': 'json path for y-axis'
                                         }})
                                     }}
@@ -204,7 +198,6 @@
                                     {{ form_widget(form.predicted_count, {'attr':
                                         {
                                             'class': 'form-control',
-                                            'value': '20',
                                             'min': '1',
                                             'max': '200',
                                             'placeholder': 'name of Y-axis'
@@ -230,10 +223,14 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-5"><a href="#" id="example_1">Place Example 1</a></div>
+            <div class="col-md-5"><a href="#" id="example_2">Place Example 2</a></div>
+        </div>
+        <div class="row">
             <div class="col-md-10">
                 <p>
-                    There are some api PSOT methods to get data:
-                    POST Headers required: import_data[source, chart_title, x_name, y_name, , x_path, y_path, predicted_count]
+                    There are some api POST methods to get data:
+                    POST Headers required: import_data[source, chart_title, x_name, y_name, x_path, y_path, predicted_count]
                 </p>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">POST http://127.0.0.1:8000/api/chart/get_points</li>
@@ -264,4 +261,26 @@
 {% block javascripts %}
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        $("body").on("click","#example_1",function(e){
+            e.preventDefault();
+            $("#import_data_source").val('https://canvasjs.com/data/gallery/jsp/total-biomass-energy-consumption.json');
+            $("#import_data_chart_title").val('Total biomass energy consumption');
+            $("#import_data_x_name").val('Time period');
+            $("#import_data_y_name").val('Consumption');
+            $("#import_data_x_path").val('$..timestamp');
+            $("#import_data_y_path").val('$..value');
+            $("#import_data_predicted_count").val('20');
+        });
+        $("body").on("click","#example_2",function(e){
+            e.preventDefault();
+            $("#import_data_source").val('https://eth.nanopool.org/api/v1/price_history/0/768');
+            $("#import_data_chart_title").val('Ethereum price ');
+            $("#import_data_x_name").val('Time period');
+            $("#import_data_y_name").val('Price value');
+            $("#import_data_x_path").val('$.data.*.time');
+            $("#import_data_y_path").val('$.data.*.price');
+            $("#import_data_predicted_count").val('20');
+        });
+    </script>
 {% endblock %}
