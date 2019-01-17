@@ -2,17 +2,15 @@
 1. composer install
 2. php ./bin/console server:start
 
-#Description
+# Description
 
-This is a diploma for iTea PHP Advanced courses.
-
-it:
+This is a diploma for iTea PHP Advanced courses. it:
 
 * provides the conversion of any json-format into a visualized chart
 * demonstrating the basic usage of machine learning in PHP
 * useful tool to build chart with prognose
 
-#PHP Ai engines
+# PHP Ai engines
 
 * PHP-ML || FANN ?
 
@@ -25,7 +23,7 @@ it:
 * http://php.net/manual/ru/book.fann.php
 * https://habr.com/ru/post/158729/
 
-#Algorithm
+# Algorithm
 
 1. Получение данных
 2. Преобразование данных
@@ -34,7 +32,7 @@ it:
     * Обучение 
 4. Вывод данных
 
-#Literature
+# Literature
 
 ## ML
 
