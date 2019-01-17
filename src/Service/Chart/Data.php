@@ -117,6 +117,7 @@ final class Data implements DataInterface {
 
 		}
 
+		$chart->sortPointsByX();
 		$this->setChart($chart);
 
 		//dump($chart);
@@ -193,16 +194,15 @@ final class Data implements DataInterface {
 		)->toArray() as $point){
 			$samples[] = [$point->getXPosition()];
 			$labels[] = $point->getYPosition();
-
-			if($i>0 && isset($samples[($i-1)][0])){
-				$point_step = abs($samples[$i][0]-$samples[($i-1)][0]);
+			if($i==0){
+				$first_x_position = $point->getXPosition();
 			}
 			$i++;
 		}
 
-		//todo; get step by min max
-
 		$last_x_position = $point->getXPosition();
+
+		$point_step = abs($last_x_position-$first_x_position)/$i;
 
 		$classifier = new LeastSquares();
 		$classifier->train($samples, $labels);
