@@ -20,6 +20,7 @@ This is a diploma for iTea PHP Advanced courses. it:
 
 ![Fann logo](https://avatars2.githubusercontent.com/u/6076229?s=200&v=4)
 
+* https://github.com/php/pecl-tools-fann
 * http://php.net/manual/ru/book.fann.php
 * https://habr.com/ru/post/158729/
 
