@@ -50,7 +50,7 @@ This is a diploma for iTea PHP Advanced courses. it:
 * https://github.com/cmen/CMENGoogleChartsBundle/blob/master/Resources/doc/cookbook.md
 * https://canvasjs.com/jsp-charts/
 
-##Json
+## Json
 
 * https://packagist.org/packages/flow/jsonpath
 * https://symfony.com/doc/current/components/serializer.html#converting-property-names-when-serializing-and-deserializing
