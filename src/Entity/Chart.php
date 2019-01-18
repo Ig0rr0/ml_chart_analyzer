@@ -53,12 +53,12 @@ class Chart
         return $this->id;
     }
 
-    public function getname(): ?string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setname(string $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
