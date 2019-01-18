@@ -5,7 +5,12 @@ namespace App\Service\Chart;
 use App\Entity\Chart;
 use App\Entity\Point;
 use Flow\JSONPath\JSONPath;
+use Flow\JSONPath\JSONPathException;
+use GuzzleHttp\Exception\ConnectException;
 use Phpml\Regression\LeastSquares;
+use GuzzleHttp\Client;
+use App\Exception\InputParamMissException;
+use App\Exception\EmptyDataException;
 
 final class Data implements DataInterface
 {
@@ -75,15 +80,14 @@ final class Data implements DataInterface
         $this->y_name = $y_name;
     }
 
-    /**
-     * @return Chart
-     *
-     * @throws \Flow\JSONPath\JSONPathException
-     *
-     * @todo new chart
-     * @todo throw non-declared prop exception
-     * Creates a chart with data from set outter source Json
-     */
+	/**
+	 * Creates a chart with data from set outter source Json
+	 * @return Chart
+	 * @throws \Flow\JSONPath\JSONPathException
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 * @throws \App\Exception\InputParamMissException
+	 * @throws \App\Exception\EmptyDataException
+	 */
     public function loadChart(): Chart
     {
         $necessary_params = [
@@ -97,16 +101,28 @@ final class Data implements DataInterface
 
         foreach ($necessary_params as $necessary_param) {
             if (empty($this->$necessary_param)) {
-                throw new \Exception($necessary_param.' must be declared');
+                throw new InputParamMissException($necessary_param.' must be declared');
             }
         }
 
-        $data = file_get_contents($this->source);
+        try{
+	        $client = new Client();
+	        $response = $client->request('GET', $this->source);
+
+	        $data = (string) $response->getBody();
+        } catch (ConnectException $exception){
+	        throw $exception;
+        }
+
         $json_data = json_decode($data);
         $json_path = new JSONPath($json_data);
 
-        $x_data = $json_path->find($this->x_path);
-        $y_data = $json_path->find($this->y_path);
+        try{
+	        $x_data = $json_path->find($this->x_path);
+	        $y_data = $json_path->find($this->y_path);
+        } catch (JSONPathException $exception){
+	        throw $exception;
+        }
 
         $chart = new Chart();
 
@@ -125,20 +141,16 @@ final class Data implements DataInterface
         $this->setChart($chart);
 
         if ($chart->getPoints()->count() < 2) {
-            throw new \Exception('There are no points in chart');
+            throw new EmptyDataException('There are no points in chart');
         }
-
-        //dump($chart);
 
         return $chart;
     }
 
     /**
+     * Convert Chaert to PieChart
      * @param Chart    $chart
      * @param PieChart $pieChart
-     *                           Convert Chaert to PieChart
-     *
-     * @todo to Dto
      *
      * @return PieChart
      */
@@ -187,9 +199,6 @@ final class Data implements DataInterface
         return $pieChart;
     }
 
-    /**
-     * @todo: optimize (!) important
-     */
     public function predictNextPoints()
     {
         $samples = [];
@@ -198,7 +207,7 @@ final class Data implements DataInterface
         $i = 0;
 
         if ($this->getChart()->getPoints()->count() < 2) {
-            throw new \Exception('There are no points in chart');
+            throw new EmptyDataException('There are no points in chart');
         }
 
         foreach ($this->getChart()->getPoints()->filter(

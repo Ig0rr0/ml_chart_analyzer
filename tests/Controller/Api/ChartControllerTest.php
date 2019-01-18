@@ -21,11 +21,11 @@ class ChartControllerTest extends WebTestCase
             $parameters['import_data'][$test_var] = $to_test_data[$test_var_id];
         }
 
-        $crawler = $client->request('POST', '/api/chart/get_points', $parameters);
+        $client->request('POST', '/api/chart/get_points', $parameters);
         $response = $client->getResponse();
 
         self::assertEquals(200, $response->getStatusCode(), 'API Page is not accessible');
         self::assertNotFalse($contents = json_decode($response->getContent(), true), 'failed json decode API');
-        self::assertGreaterThan(10, $contents['points']);
+        self::assertGreaterThan(2, $contents['points']);
     }
 }

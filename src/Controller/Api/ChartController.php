@@ -38,7 +38,7 @@ final class ChartController extends AbstractFOSRestController
             $service->setYPath($form->getViewData()['y_path']);
             $service->setYName($form->getViewData()['y_name']);
             $service->setPredictedPointsCount($form->getViewData()['predicted_count']);
-        } catch (\ErrorException $exception) {
+        } catch (\Exception $exception) {
             $response = [
                 'error' => $exception->getMessage(),
             ];

@@ -39,7 +39,7 @@ class ChartController extends AbstractController
             $service->setYPath($form->getViewData()['y_path']);
             $service->setYName($form->getViewData()['y_name']);
             $service->setPredictedPointsCount($form->getViewData()['predicted_count']);
-        } catch (\ErrorException $exception) {
+        } catch (\Exception $exception) {
             return $this->render('chart/error.html.twig', [
                 'message' => $exception->getMessage(),
             ]);
