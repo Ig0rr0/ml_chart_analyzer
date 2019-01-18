@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Igorro
- * Date: 17.01.2019
- * Time: 00:27.
- */
 
 namespace App\Service\Chart\Form;
 

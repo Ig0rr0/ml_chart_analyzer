@@ -1,4 +1,8 @@
 <?php
+
+$header = <<<HEADER
+HEADER;
+
 $finder = \PhpCsFixer\Finder::create()
     ->in(__DIR__)
     ->exclude('docs')
@@ -26,6 +30,11 @@ return \PhpCsFixer\Config::create()
                 'while',
             ],
         ],
+        'header_comment' => [
+            'header' => $header,
+            'commentType' => 'comment',
+            'separate' => 'both',
+        ],
         'cast_spaces' => [
             'space' => 'single',
         ],
@@ -36,10 +45,6 @@ return \PhpCsFixer\Config::create()
         'final_internal_class' => true,
         'function_to_constant' => true,
         'function_typehint_space' => true,
-        'header_comment' => [
-            'commentType' => 'comment',
-            'separate' => 'both',
-        ],
         'is_null' => true,
         // PHP 7.x only
         'list_syntax' => [

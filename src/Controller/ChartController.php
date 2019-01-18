@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Igorro
- * Date: 09.01.2019
- * Time: 18:53.
- */
 
 namespace App\Controller;
 
@@ -36,20 +30,19 @@ class ChartController extends AbstractController
             $this->redirect('/');
         }
 
-
-	    try {
-	        $service->setSource($form->getViewData()['source']);
-	        $service->setTitle($form->getViewData()['chart_title']);
-	        $service->setXPath($form->getViewData()['x_path']);
-	        $service->setXName($form->getViewData()['x_name']);
-	        $service->setYPath($form->getViewData()['y_path']);
-	        $service->setYName($form->getViewData()['y_name']);
-	        $service->setPredictedPointsCount($form->getViewData()['predicted_count']);
-	    } catch (\ErrorException $exception) {
-		    return $this->render('chart/error.html.twig', [
-			    'message' => $exception->getMessage(),
-		    ]);
-	    }
+        try {
+            $service->setSource($form->getViewData()['source']);
+            $service->setTitle($form->getViewData()['chart_title']);
+            $service->setXPath($form->getViewData()['x_path']);
+            $service->setXName($form->getViewData()['x_name']);
+            $service->setYPath($form->getViewData()['y_path']);
+            $service->setYName($form->getViewData()['y_name']);
+            $service->setPredictedPointsCount($form->getViewData()['predicted_count']);
+        } catch (\ErrorException $exception) {
+            return $this->render('chart/error.html.twig', [
+                'message' => $exception->getMessage(),
+            ]);
+        }
 
         try {
             $chart = $service->loadChart();
