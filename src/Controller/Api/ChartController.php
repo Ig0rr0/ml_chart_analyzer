@@ -66,10 +66,11 @@ final class ChartController extends AbstractFOSRestController
         $encoder = new JsonEncoder();
         $normalizer = new ObjectNormalizer();
 
-        $normalizer->setCircularReferenceHandler(function ($object, string $format = null, array $context = []) {
-            //wtf! this method is described in actual docs: https://symfony.com/doc/current/components/serializer.html why deprecated method is in actual docs and no alternative presented?
+	    $normalizer->setCircularReferenceHandler(function ($object, string $format = null, array $context = []) {
             return $object->getPoints();
         });
+	    //https://symfony.com/doc/current/reference/configuration/framework.html#circular-reference-handler - does not work: uncomment config\packages\test\framework.yaml:5-7 and try
+	    //deprecated method https://symfony.com/doc/current/components/serializer.html#handling-circular-references
 
         $serializer = new Serializer([$normalizer], [$encoder]);
 
