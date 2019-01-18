@@ -4,12 +4,11 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use App\Service\Home\HomePageServiceInterface;
 use App\Service\Chart\Form\ImportData;
 
 class HomeController extends AbstractController
 {
-    public function index(HomePageServiceInterface $service): Response
+    public function index(): Response
     {
         $form = $this->createForm(ImportData::class, null, [
             'action' => $this->generateUrl('chart'),
