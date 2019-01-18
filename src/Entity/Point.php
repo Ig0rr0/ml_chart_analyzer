@@ -35,12 +35,7 @@ class Point
     /**
      * @ORM\Column(type="boolean")
      */
-    private $predicted;
-
-    public function __construct()
-    {
-        $this->setPredicted(false);
-    }
+    private $predicted = false;
 
     public function getId(): ?int
     {
