@@ -160,17 +160,9 @@
                                 </div>
                             </div>
                             <div class="col-md-6 centered">
-                                {{ form_widget(form.save, {'attr':
-                                    {
-                                        'class': 'btn btn-primary',
-                                        'label': 'Generate'
-                                    }})
-                                }}
+                                <button type="submit" id="import_data_save" name="import_data[save]" class="btn btn-primary" label="Generate">Generate</button>
                             </div>
                         </div>
-
-                        {#todo: implement limits#}
-
                         {{ form_end(form) }}
                     </form>
                 </div>
