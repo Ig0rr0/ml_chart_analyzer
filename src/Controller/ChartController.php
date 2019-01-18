@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\LineChart;
-use App\Service\Chart\Form\ImportData;
+use App\Form\ImportData;
 
 class ChartController extends AbstractController
 {
