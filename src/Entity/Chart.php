@@ -21,7 +21,7 @@ class Chart
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $Name;
+    private $name;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="chart", orphanRemoval=true)
@@ -58,9 +58,9 @@ class Chart
         return $this->Name;
     }
 
-    public function setName(string $Name): self
+    public function setName(string $name): self
     {
-        $this->Name = $Name;
+        $this->name = $name;
 
         return $this;
     }
