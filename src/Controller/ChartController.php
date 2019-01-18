@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Dto\Chart as ChartDto;
 use App\Service\Chart\DataInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use CMEN\GoogleChartsBundle\GoogleCharts\Charts\LineChart;
+
 use App\Form\ImportData;
 
 class ChartController extends AbstractController
@@ -32,13 +33,15 @@ class ChartController extends AbstractController
         }
 
         try {
-            $service->setSource($form->getViewData()['source']);
-            $service->setTitle($form->getViewData()['chart_title']);
-            $service->setXPath($form->getViewData()['x_path']);
-            $service->setXName($form->getViewData()['x_name']);
-            $service->setYPath($form->getViewData()['y_path']);
-            $service->setYName($form->getViewData()['y_name']);
-            $service->setPredictedPointsCount($form->getViewData()['predicted_count']);
+        	$chart_dto = new ChartDto(
+		        $form->getViewData()['source'],
+		        $form->getViewData()['chart_title'],
+		        $form->getViewData()['x_path'],
+		        $form->getViewData()['y_path'],
+		        $form->getViewData()['x_name'],
+		        $form->getViewData()['y_name'],
+		        $form->getViewData()['predicted_count']
+	        );
         } catch (\Exception $exception) {
             return $this->render('chart/error.html.twig', [
                 'message' => $exception->getMessage(),
@@ -46,7 +49,9 @@ class ChartController extends AbstractController
         }
 
         try {
-            $chart = $service->loadChart();
+            $service->loadChart(
+	            $chart_dto
+            );
         } catch (\Exception $exception) {
             return $this->render('chart/error.html.twig', [
                 'message' => $exception->getMessage(),
@@ -55,10 +60,8 @@ class ChartController extends AbstractController
 
         $service->predictNextPoints();
 
-        $pieChart = new LineChart();
-
         $pieChart =
-            $service->importPieChart($pieChart);
+            $service->importPieChart();
 
         $pieChart->getOptions()->setHeight(500);
         $pieChart->getOptions()->setWidth(900);
