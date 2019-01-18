@@ -26,8 +26,9 @@ class ChartController extends AbstractController
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
-            $this->addFlash('failure', 'Some data missing');
-            $this->redirect('/');
+	        return $this->render('chart/error.html.twig', [
+		        'message' => 'Some data missing',
+	        ]);
         }
 
         try {
