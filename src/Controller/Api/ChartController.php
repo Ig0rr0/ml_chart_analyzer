@@ -30,24 +30,28 @@ final class ChartController extends AbstractFOSRestController
             return $this->view($response, Response::HTTP_BAD_REQUEST);
         }
 
-        try {
-            $service->setSource($form->getViewData()['source']);
-            $service->setTitle($form->getViewData()['chart_title']);
-            $service->setXPath($form->getViewData()['x_path']);
-            $service->setXName($form->getViewData()['x_name']);
-            $service->setYPath($form->getViewData()['y_path']);
-            $service->setYName($form->getViewData()['y_name']);
-            $service->setPredictedPointsCount($form->getViewData()['predicted_count']);
-        } catch (\Exception $exception) {
-            $response = [
-                'error' => $exception->getMessage(),
-            ];
+	    try {
+		    $chart_dto = new ChartDto(
+			    $form->getViewData()['source'],
+			    $form->getViewData()['chart_title'],
+			    $form->getViewData()['x_path'],
+			    $form->getViewData()['y_path'],
+			    $form->getViewData()['x_name'],
+			    $form->getViewData()['y_name'],
+			    $form->getViewData()['predicted_count']
+		    );
+	    } catch (\Exception $exception) {
+		    $response = [
+			    'error' => $exception->getMessage(),
+		    ];
 
-            return $this->view($response, Response::HTTP_BAD_REQUEST);
-        }
+		    return $this->view($response, Response::HTTP_BAD_REQUEST);
+	    }
 
         try {
-            $chart = $service->loadChart();
+            $service->loadChart(
+	            $chart_dto
+            );
         } catch (\Exception $exception) {
             $response = [
                 'error' => $exception->getMessage(),
