@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Dto\Chart as ChartDto;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use App\Service\Chart\DataInterface;
