@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "778fe3d00a371ed9c7b26797a6ef3627",
-    "content-hash": "a23d7aa1c6af5f146bf8aeae3d793ff3",
+    "hash": "909d1f8b1c52572ecef6fe723b831295",
+    "content-hash": "2d88ee4b73a0f92d5ee774e3e59ced51",
     "packages": [
         {
             "name": "cmen/google-charts-bundle",

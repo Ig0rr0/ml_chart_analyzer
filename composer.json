@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "cmen/google-charts-bundle": "^3.0",
+        "doctrine/doctrine-migrations-bundle": "^2.0",
         "flow/jsonpath": "^0.4.0",
         "friendsofsymfony/rest-bundle": "^2.5",
         "guzzlehttp/guzzle": "^6.3",
