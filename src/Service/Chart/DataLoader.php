@@ -3,6 +3,7 @@ namespace App\Service\Chart;
 
 use App\Dto\Chart as ChartDto;
 use App\Entity\Chart;
+use App\Model\Chart\ModifiedChartEntity;
 use App\Entity\Point;
 use App\Model\Chart\DataDraw;
 use App\Model\Chart\DataLearn;
@@ -51,7 +52,7 @@ class DataLoader implements DataInterface{
 			throw $exception;
 		}
 
-		$chart = new Chart();
+		$chart = new ModifiedChartEntity();
 
 		foreach ($x_data as $i => $x_row) {
 			$point = new Point();
