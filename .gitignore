@@ -22,4 +22,7 @@
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 .env.test
+.env
 php_cs.cache
+todo.txt
+.php_cs

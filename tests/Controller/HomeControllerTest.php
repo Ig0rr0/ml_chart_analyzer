@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  * Class HomeTest
  * Tests main page accessed.
  */
-class HomeTest extends WebTestCase
+class HomeControllerTest extends WebTestCase
 {
     public function testFormPresented()
     {

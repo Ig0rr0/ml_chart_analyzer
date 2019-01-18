@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\LineChart;
 use App\Service\Chart\Form\ImportData;
 
-class Chart extends AbstractController
+class ChartController extends AbstractController
 {
     /**
      * Puts data from request to service

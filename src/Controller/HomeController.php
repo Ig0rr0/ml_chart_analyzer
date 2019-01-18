@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Service\Home\HomePageServiceInterface;
 use App\Service\Chart\Form\ImportData;
 
-class Home extends AbstractController
+class HomeController extends AbstractController
 {
     public function index(HomePageServiceInterface $service): Response
     {

@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  * Class ChartTest
  * If chartpoints geterates - components & modules inside script works fine.
  */
-class ChartTest extends WebTestCase
+class ChartControllerTest extends WebTestCase
 {
     public function testApiReturns()
     {
