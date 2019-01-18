@@ -10,40 +10,41 @@ use App\Exception\InputParamMissException;
 final class Chart
 {
 	private $source;
-	private $title;
+	private $chart_title;
 	private $x_path;
 	private $y_path;
 	private $x_name;
 	private $y_name;
-	private $predicted_points_count;
+	private $predicted_count;
+
+	public static $necessary_params = [
+		'source',
+		'chart_title',
+		'x_path',
+		'x_name',
+		'y_path',
+		'y_name',
+		'predicted_count'
+	];
 
 	public function __construct(
 		string $source,
-		string $title,
+		string $chart_title,
 		string $x_path,
 		string $y_path,
 		string $x_name,
 		string $y_name,
-		int $predicted_points_count
+		int $predicted_count
 	) {
 		$this->source = $source;
-		$this->title = $title;
+		$this->chart_title = $chart_title;
 		$this->x_path = $x_path;
 		$this->y_path = $y_path;
 		$this->x_name = $x_name;
 		$this->y_name = $y_name;
-		$this->predicted_points_count = $predicted_points_count;
+		$this->predicted_count = $predicted_count;
 
-		$necessary_params = [
-			'source',
-			'title',
-			'x_path',
-			'x_name',
-			'y_path',
-			'y_name',
-		];
-
-		foreach ($necessary_params as $necessary_param) {
+		foreach (self::$necessary_params as $necessary_param) {
 			if (empty($this->$necessary_param)) {
 				throw new InputParamMissException($necessary_param.' must be declared');
 			}
@@ -61,7 +62,7 @@ final class Chart
 	 * @return string
 	 */
 	public function getTitle(): string {
-		return $this->title;
+		return $this->chart_title;
 	}
 
 	/**
@@ -97,6 +98,6 @@ final class Chart
 	 */
 	public function getPredictedPointsCount()
 	{
-		return $this->predicted_points_count;
+		return $this->predicted_count;
 	}
 }

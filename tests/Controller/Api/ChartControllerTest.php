@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Dto\Chart;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -14,8 +15,8 @@ class ChartControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $to_test = ['source', 'chart_title', 'x_name', 'y_name', 'x_path', 'y_path', 'predicted_count'];
-        $to_test_data = ['https://eth.nanopool.org/api/v1/price_history/0/768', 'Ethereum price ', 'Time period', 'Price value', '$.data.*.time', '$.data.*.price', '20'];
+        $to_test = Chart::$necessary_params;
+        $to_test_data = ['https://eth.nanopool.org/api/v1/price_history/0/768', 'Ethereum price ', '$.data.*.time', '$.data.*.price', 'Time period', 'Price value', '20'];
         $parameters = [];
         foreach ($to_test as $test_var_id => $test_var) {
             $parameters['import_data'][$test_var] = $to_test_data[$test_var_id];

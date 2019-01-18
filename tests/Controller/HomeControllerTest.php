@@ -3,6 +3,7 @@
 namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Dto\Chart;
 
 /**
  * Class HomeTest
@@ -15,7 +16,7 @@ class HomeControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request('GET', '/');
         self::assertEquals(200, $client->getResponse()->getStatusCode(), 'Home Page is not accessible');
-        $to_test = ['source', 'chart_title', 'x_name', 'y_name', 'x_path', 'y_path', 'predicted_count'];
+	    $to_test = Chart::$necessary_params;
         foreach ($to_test as $test_var) {
             self::assertEquals(
                 1,

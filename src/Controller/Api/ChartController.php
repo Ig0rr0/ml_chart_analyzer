@@ -36,8 +36,8 @@ final class ChartController extends AbstractFOSRestController
 			    $form->getViewData()['source'],
 			    $form->getViewData()['chart_title'],
 			    $form->getViewData()['x_path'],
-			    $form->getViewData()['y_path'],
 			    $form->getViewData()['x_name'],
+			    $form->getViewData()['y_path'],
 			    $form->getViewData()['y_name'],
 			    $form->getViewData()['predicted_count']
 		    );
