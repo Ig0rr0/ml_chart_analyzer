@@ -2,7 +2,7 @@
 
 namespace App\Tests\Controller;
 
-use App\Dto\Chart;
+use App\Dto\Chart as ChartDto;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -15,7 +15,7 @@ class ChartControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $to_test = Chart::$necessary_params;
+        $to_test = ChartDto::$necessary_params;
         $to_test_data = ['https://eth.nanopool.org/api/v1/price_history/0/768', 'Ethereum price ', '$.data.*.time', '$.data.*.price', 'Time period', 'Price value', '20'];
         $parameters = [];
         foreach ($to_test as $test_var_id => $test_var) {
@@ -26,7 +26,7 @@ class ChartControllerTest extends WebTestCase
         $response = $client->getResponse();
 
         self::assertEquals(200, $response->getStatusCode(), 'API Page is not accessible');
-        self::assertNotFalse($contents = json_decode($response->getContent(), true), 'failed json decode API');
-        self::assertGreaterThan(2, $contents['points']);
+        self::assertNotFalse($contents = \json_decode($response->getContent(), true), 'failed json decode API');
+        self::assertGreaterThan(2, $contents);
     }
 }

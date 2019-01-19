@@ -76,19 +76,17 @@ final class ChartController extends AbstractFOSRestController
 
         $service->predictNextPoints($chart_dto, $chart);
 
-        $encoder = new JsonEncoder();
-        $normalizer = new ObjectNormalizer();
+	    $response=[];
 
-        $normalizer->setCircularReferenceHandler(function ($object, string $format = null, array $context = []) {
-            return $object->getPoints();
-        });
-        //https://symfony.com/doc/current/reference/configuration/framework.html#circular-reference-handler - does not work: uncomment config\packages\test\framework.yaml:5-7 and try
-        //deprecated method https://symfony.com/doc/current/components/serializer.html#handling-circular-references
+	    foreach ($chart->getPoints() as $point){
+	    	$response[]=
+			    [
+				    'x'	=>$point->getXPosition(),
+				    'y'	=>$point->getYPosition(),
+				    'predicted'	=>$point->getPredicted()
+			    ];
+        }
 
-        $serializer = new Serializer([$normalizer], [$encoder]);
-
-        $response = $serializer->serialize($chart, 'json');
-
-        return $this->view(json_decode($response, true), Response::HTTP_OK);
+        return $this->view($response, Response::HTTP_OK);
     }
 }

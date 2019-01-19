@@ -2,7 +2,8 @@
 {% block title %}An error occured{% endblock %}
 {% block javascripts %}
     <script>
-        alert('{{ message|escape }}');
+        var error_message=`{{ message|escape|replace({'`': '"'}) }}`;
+        alert(error_message);
         window.history.back();
     </script>
 {% endblock %}
