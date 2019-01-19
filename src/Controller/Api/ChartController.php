@@ -13,6 +13,10 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
+use GuzzleHttp\Exception\ConnectException;
+use App\Exception\InputParamMissException;
+use App\Exception\EmptyDataException;
+
 final class ChartController extends AbstractFOSRestController
 {
     /**
