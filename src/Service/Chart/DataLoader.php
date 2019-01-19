@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Service\Chart;
 
 use App\Dto\Chart as ChartDto;
@@ -12,105 +13,111 @@ use Flow\JSONPath\JSONPathException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Client;
 
+class DataLoader implements DataInterface
+{
+    private $chart;
+    private $chart_dto;
 
-class DataLoader implements DataInterface{
+    /**
+     * Creates a chart with data from set outter source Json.
+     *
+     * @param ChartDto $chart_dto
+     *
+     * @return Chart
+     *
+     * @throws \Flow\JSONPath\JSONPathException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \App\Exception\InputParamMissException
+     * @throws \App\Exception\EmptyDataException
+     */
+    public function loadChart(ChartDto $chart_dto): Chart
+    {
+        $this->chart_dto = $chart_dto;
 
-	private $chart;
-	private $chart_dto;
+        try {
+            $client = new Client();
+            $response = $client->request('GET', $chart_dto->getSource());
 
-	/**
-	 * Creates a chart with data from set outter source Json
-	 * @param ChartDto $chart_dto
-	 *
-	 * @return Chart
-	 * @throws \Flow\JSONPath\JSONPathException
-	 * @throws \GuzzleHttp\Exception\GuzzleException
-	 * @throws \App\Exception\InputParamMissException
-	 * @throws \App\Exception\EmptyDataException
-	 */
-	public function loadChart(ChartDto $chart_dto): Chart
-	{
+            $data = (string) $response->getBody();
+        } catch (ConnectException $exception) {
+            throw $exception;
+        }
 
-		$this->chart_dto = $chart_dto;
+        $json_data = json_decode($data);
+        $json_path = new JSONPath($json_data);
 
-		try{
-			$client = new Client();
-			$response = $client->request('GET', $chart_dto->getSource());
+        try {
+            $x_data = $json_path->find($chart_dto->getXPath());
+            $y_data = $json_path->find($chart_dto->getYPath());
+        } catch (JSONPathException $exception) {
+            throw $exception;
+        }
 
-			$data = (string) $response->getBody();
-		} catch (ConnectException $exception){
-			throw $exception;
-		}
+        $chart = new ModifiedChartEntity();
 
-		$json_data = json_decode($data);
-		$json_path = new JSONPath($json_data);
+        foreach ($x_data as $i => $x_row) {
+            $point = new Point();
+            $point
+                ->setXPosition($x_data[$i])
+                ->setYPosition($y_data[$i]);
 
-		try{
-			$x_data = $json_path->find($chart_dto->getXPath());
-			$y_data = $json_path->find($chart_dto->getYPath());
-		} catch (JSONPathException $exception){
-			throw $exception;
-		}
+            $chart->addPoint(
+                $point
+            );
+        }
 
-		$chart = new ModifiedChartEntity();
+        $chart->sortPointsByX();
+        $this->setChart($chart);
 
-		foreach ($x_data as $i => $x_row) {
-			$point = new Point();
-			$point
-				->setXPosition($x_data[$i])
-				->setYPosition($y_data[$i]);
+        if ($chart->getPoints()->count() < 2) {
+            throw new EmptyDataException('There are no points in chart');
+        }
 
-			$chart->addPoint(
-				$point
-			);
-		}
+        return $chart;
+    }
 
-		$chart->sortPointsByX();
-		$this->setChart($chart);
+    public function predictNextPoints()
+    {
+        $this->setChart(
+            DataLearn::predictNextPoints($this->getChart(), $this->chart_dto->getPredictedPointsCount())
+        );
+    }
 
-		if ($chart->getPoints()->count() < 2) {
-			throw new EmptyDataException('There are no points in chart');
-		}
+    public function importPieChart()
+    {
+        return
+            DataDraw::importPieChart($this->getChartDto(), $this->getChart());
+    }
 
-		return $chart;
-	}
+    /**
+     * @return mixed
+     */
+    public function getChart(): Chart
+    {
+        return $this->chart;
+    }
 
-	public function predictNextPoints(){
-		$this->setChart(
-			DataLearn::predictNextPoints($this->getChart(), $this->chart_dto->getPredictedPointsCount())
-		);
-	}
+    /**
+     * @return mixed
+     */
+    public function getChartDto()
+    {
+        return $this->chart_dto;
+    }
 
-	public function importPieChart(){
-		return
-			DataDraw::importPieChart($this->getChartDto(),$this->getChart());
-	}
+    /**
+     * @param mixed $chart_dto
+     */
+    public function setChartDto($chart_dto): void
+    {
+        $this->chart_dto = $chart_dto;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getChart(): Chart {
-		return $this->chart;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getChartDto() {
-		return $this->chart_dto;
-	}
-
-	/**
-	 * @param mixed $chart_dto
-	 */
-	public function setChartDto( $chart_dto ): void {
-		$this->chart_dto = $chart_dto;
-	}
-
-	/**
-	 * @param mixed $chart
-	 */
-	public function setChart( Chart $chart ): void {
-		$this->chart = $chart;
-	}
+    /**
+     * @param mixed $chart
+     */
+    public function setChart(Chart $chart): void
+    {
+        $this->chart = $chart;
+    }
 }

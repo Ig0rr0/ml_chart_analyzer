@@ -31,27 +31,27 @@ final class ChartController extends AbstractFOSRestController
             return $this->view($response, Response::HTTP_BAD_REQUEST);
         }
 
-	    try {
-		    $chart_dto = new ChartDto(
-			    $form->getViewData()['source'],
-			    $form->getViewData()['chart_title'],
-			    $form->getViewData()['x_path'],
-			    $form->getViewData()['x_name'],
-			    $form->getViewData()['y_path'],
-			    $form->getViewData()['y_name'],
-			    $form->getViewData()['predicted_count']
-		    );
-	    } catch (\Exception $exception) {
-		    $response = [
-			    'error' => $exception->getMessage(),
-		    ];
+        try {
+            $chart_dto = new ChartDto(
+                $form->getViewData()['source'],
+                $form->getViewData()['chart_title'],
+                $form->getViewData()['x_path'],
+                $form->getViewData()['x_name'],
+                $form->getViewData()['y_path'],
+                $form->getViewData()['y_name'],
+                $form->getViewData()['predicted_count']
+            );
+        } catch (\Exception $exception) {
+            $response = [
+                'error' => $exception->getMessage(),
+            ];
 
-		    return $this->view($response, Response::HTTP_BAD_REQUEST);
-	    }
+            return $this->view($response, Response::HTTP_BAD_REQUEST);
+        }
 
         try {
             $service->loadChart(
-	            $chart_dto
+                $chart_dto
             );
         } catch (\Exception $exception) {
             $response = [
@@ -66,11 +66,11 @@ final class ChartController extends AbstractFOSRestController
         $encoder = new JsonEncoder();
         $normalizer = new ObjectNormalizer();
 
-	    $normalizer->setCircularReferenceHandler(function ($object, string $format = null, array $context = []) {
+        $normalizer->setCircularReferenceHandler(function ($object, string $format = null, array $context = []) {
             return $object->getPoints();
         });
-	    //https://symfony.com/doc/current/reference/configuration/framework.html#circular-reference-handler - does not work: uncomment config\packages\test\framework.yaml:5-7 and try
-	    //deprecated method https://symfony.com/doc/current/components/serializer.html#handling-circular-references
+        //https://symfony.com/doc/current/reference/configuration/framework.html#circular-reference-handler - does not work: uncomment config\packages\test\framework.yaml:5-7 and try
+        //deprecated method https://symfony.com/doc/current/components/serializer.html#handling-circular-references
 
         $serializer = new Serializer([$normalizer], [$encoder]);
 

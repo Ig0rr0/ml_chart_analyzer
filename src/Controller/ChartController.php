@@ -7,7 +7,6 @@ use App\Service\Chart\DataInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-
 use App\Form\ImportData;
 
 class ChartController extends AbstractController
@@ -27,21 +26,21 @@ class ChartController extends AbstractController
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
-	        return $this->render('chart/error.html.twig', [
-		        'message' => 'Some data missing',
-	        ]);
+            return $this->render('chart/error.html.twig', [
+                'message' => 'Some data missing',
+            ]);
         }
 
         try {
-        	$chart_dto = new ChartDto(
-		        $form->getViewData()['source'],
-		        $form->getViewData()['chart_title'],
-		        $form->getViewData()['x_path'],
-		        $form->getViewData()['y_path'],
-		        $form->getViewData()['x_name'],
-		        $form->getViewData()['y_name'],
-		        $form->getViewData()['predicted_count']
-	        );
+            $chart_dto = new ChartDto(
+                $form->getViewData()['source'],
+                $form->getViewData()['chart_title'],
+                $form->getViewData()['x_path'],
+                $form->getViewData()['y_path'],
+                $form->getViewData()['x_name'],
+                $form->getViewData()['y_name'],
+                $form->getViewData()['predicted_count']
+            );
         } catch (\Exception $exception) {
             return $this->render('chart/error.html.twig', [
                 'message' => $exception->getMessage(),
@@ -50,7 +49,7 @@ class ChartController extends AbstractController
 
         try {
             $service->loadChart(
-	            $chart_dto
+                $chart_dto
             );
         } catch (\Exception $exception) {
             return $this->render('chart/error.html.twig', [
