@@ -18,20 +18,20 @@ final class ImportData extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('chart_title', TextType::class, ['required'=>true])
-            ->add('source', UrlType::class, ['required'=>true])
-            ->add('x_path', TextType::class, ['required'=>true])
-            ->add('x_name', TextType::class, ['required'=>true])
-            ->add('y_path', TextType::class, ['required'=>true])
-            ->add('y_name', TextType::class, ['required'=>true])
+            ->add('chart_title', TextType::class, ['required' => true])
+            ->add('source', UrlType::class, ['required' => true])
+            ->add('x_path', TextType::class, ['required' => true])
+            ->add('x_name', TextType::class, ['required' => true])
+            ->add('y_path', TextType::class, ['required' => true])
+            ->add('y_name', TextType::class, ['required' => true])
             ->add('predicted_count', IntegerType::class)
         ;
     }
 
-	public function configureOptions(OptionsResolver $resolver): void
-	{
-		$resolver->setDefaults([
-			'data_class' => ChartDto::class,
-		]);
-	}
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => ChartDto::class,
+        ]);
+    }
 }

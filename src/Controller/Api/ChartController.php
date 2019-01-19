@@ -8,10 +8,6 @@ use App\Service\Chart\DataInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\ImportData;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-
 use GuzzleHttp\Exception\ConnectException;
 use App\Exception\EmptyDataException;
 use App\Exception\InputParamMissException;
@@ -35,7 +31,7 @@ final class ChartController extends AbstractFOSRestController
         }
 
         try {
-	        $chart_dto = $form->getData();
+            $chart_dto = $form->getData();
         } catch (InputParamMissException $exception) {
             $response = [
                 'error' => $exception->getMessage(),
@@ -43,11 +39,11 @@ final class ChartController extends AbstractFOSRestController
 
             return $this->view($response, Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {
-	        $response = [
-		        'error' => "Unknown error: ".$exception->getMessage(),
-	        ];
+            $response = [
+                'error' => 'Unknown error: '.$exception->getMessage(),
+            ];
 
-	        return $this->view($response, Response::HTTP_BAD_REQUEST);
+            return $this->view($response, Response::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -55,36 +51,36 @@ final class ChartController extends AbstractFOSRestController
                 $chart_dto
             );
         } catch (ConnectException $exception) {
-		        $response = [
-			        'error' => $exception->getMessage(),
-		        ];
+            $response = [
+                    'error' => $exception->getMessage(),
+                ];
 
-	        return $this->view($response, Response::HTTP_BAD_REQUEST);
+            return $this->view($response, Response::HTTP_BAD_REQUEST);
         } catch (EmptyDataException $exception) {
-	            $response = [
-			        'error' => $exception->getMessage(),
-		        ];
+            $response = [
+                    'error' => $exception->getMessage(),
+                ];
 
-	        return $this->view($response, Response::HTTP_BAD_REQUEST);
+            return $this->view($response, Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {
-	            $response = [
-			        'error' => "Unknown error: ".$exception->getMessage(),
-		        ];
+            $response = [
+                    'error' => 'Unknown error: '.$exception->getMessage(),
+                ];
 
-	        return $this->view($response, Response::HTTP_BAD_REQUEST);
+            return $this->view($response, Response::HTTP_BAD_REQUEST);
         }
 
         $service->predictNextPoints($chart_dto, $chart);
 
-	    $response=[];
+        $response = [];
 
-	    foreach ($chart->getPoints() as $point){
-	    	$response[]=
-			    [
-				    'x'	=>$point->getXPosition(),
-				    'y'	=>$point->getYPosition(),
-				    'predicted'	=>$point->getPredicted()
-			    ];
+        foreach ($chart->getPoints() as $point) {
+            $response[] =
+                [
+                    'x' => $point->getXPosition(),
+                    'y' => $point->getYPosition(),
+                    'predicted' => $point->getPredicted(),
+                ];
         }
 
         return $this->view($response, Response::HTTP_OK);

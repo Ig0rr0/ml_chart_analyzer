@@ -2,8 +2,6 @@
 
 namespace App\Dto;
 
-use App\Exception\InputParamMissException;
-
 /**
  * Data transfer object for Chart entity.
  */
@@ -21,7 +19,7 @@ final class Chart
         'source',
         'chart_title',
         'x_path',
-	    'y_path',
+        'y_path',
         'x_name',
         'y_name',
         'predicted_count',
