@@ -4,11 +4,11 @@ namespace App\Service\Chart;
 
 use App\Dto\Chart as ChartDto;
 use App\Entity\Chart;
-use App\Model\Chart\ModifiedChartEntity;
 use App\Entity\Point;
 use Flow\JSONPath\JSONPath;
 use Flow\JSONPath\JSONPathException;
 use GuzzleHttp\Exception\ConnectException;
+use App\Exception\EmptyDataException;
 use GuzzleHttp\Client;
 
 class DataLoader implements DataInterface
@@ -46,7 +46,7 @@ class DataLoader implements DataInterface
             throw $exception;
         }
 
-        $chart = new ModifiedChartEntity();
+        $chart = new Chart();
 
         foreach ($x_data as $i => $x_row) {
             $point = new Point();
@@ -59,7 +59,7 @@ class DataLoader implements DataInterface
             );
         }
 
-        $chart->sortPointsByX();
+        $chart->getPoints()->sortPointsByX();
 
         if ($chart->getPoints()->count() < 2) {
             throw new EmptyDataException('There are no points in chart');

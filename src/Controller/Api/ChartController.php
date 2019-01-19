@@ -50,7 +50,7 @@ final class ChartController extends AbstractFOSRestController
         }
 
         try {
-            $service->loadChart(
+            $chart = $service->loadChart(
                 $chart_dto
             );
         } catch (\Exception $exception) {
@@ -61,7 +61,7 @@ final class ChartController extends AbstractFOSRestController
             return $this->view($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $service->predictNextPoints();
+        $service->predictNextPoints($chart_dto, $chart);
 
         $encoder = new JsonEncoder();
         $normalizer = new ObjectNormalizer();
