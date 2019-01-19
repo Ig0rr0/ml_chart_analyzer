@@ -6,8 +6,6 @@ use App\Dto\Chart as ChartDto;
 use App\Entity\Chart;
 use App\Model\Chart\ModifiedChartEntity;
 use App\Entity\Point;
-use App\Model\Chart\DataDraw;
-use App\Model\Chart\DataLearn;
 use Flow\JSONPath\JSONPath;
 use Flow\JSONPath\JSONPathException;
 use GuzzleHttp\Exception\ConnectException;
@@ -15,9 +13,6 @@ use GuzzleHttp\Client;
 
 class DataLoader implements DataInterface
 {
-    private $chart;
-    private $chart_dto;
-
     /**
      * Creates a chart with data from set outter source Json.
      *
@@ -32,8 +27,6 @@ class DataLoader implements DataInterface
      */
     public function loadChart(ChartDto $chart_dto): Chart
     {
-        $this->chart_dto = $chart_dto;
-
         try {
             $client = new Client();
             $response = $client->request('GET', $chart_dto->getSource());
@@ -67,7 +60,6 @@ class DataLoader implements DataInterface
         }
 
         $chart->sortPointsByX();
-        $this->setChart($chart);
 
         if ($chart->getPoints()->count() < 2) {
             throw new EmptyDataException('There are no points in chart');
@@ -76,48 +68,9 @@ class DataLoader implements DataInterface
         return $chart;
     }
 
-    public function predictNextPoints()
-    {
-        $this->setChart(
-            DataLearn::predictNextPoints($this->getChart(), $this->chart_dto->getPredictedPointsCount())
-        );
-    }
-
-    public function importPieChart()
+    public function predictNextPoints(ChartDto $chart_dto, Chart $chart)
     {
         return
-            DataDraw::importPieChart($this->getChartDto(), $this->getChart());
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getChart(): Chart
-    {
-        return $this->chart;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getChartDto()
-    {
-        return $this->chart_dto;
-    }
-
-    /**
-     * @param mixed $chart_dto
-     */
-    public function setChartDto($chart_dto): void
-    {
-        $this->chart_dto = $chart_dto;
-    }
-
-    /**
-     * @param mixed $chart
-     */
-    public function setChart(Chart $chart): void
-    {
-        $this->chart = $chart;
+            DataLearn::predictNextPoints($chart, $chart_dto->getPredictedPointsCount());
     }
 }

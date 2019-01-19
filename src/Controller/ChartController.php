@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\Chart as ChartDto;
+use App\Dto\DataDraw;
 use App\Service\Chart\DataInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,7 +49,7 @@ class ChartController extends AbstractController
         }
 
         try {
-            $service->loadChart(
+            $chart = $service->loadChart(
                 $chart_dto
             );
         } catch (\Exception $exception) {
@@ -57,10 +58,10 @@ class ChartController extends AbstractController
             ]);
         }
 
-        $service->predictNextPoints();
+	    $chart = $service->predictNextPoints($chart_dto,$chart);
 
         $pieChart =
-            $service->importPieChart();
+            DataDraw::importPieChart($chart_dto,$chart);
 
         $pieChart->getOptions()->setHeight(500);
         $pieChart->getOptions()->setWidth(900);

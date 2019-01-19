@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Chart;
+namespace App\Service\Chart;
 
 use Phpml\Regression\LeastSquares;
 use App\Exception\EmptyDataException;
@@ -17,7 +17,7 @@ class DataLearn
      *
      * @return Chart
      */
-    public static function predictNextPoints(Chart $chart, $predicted_points_count)
+    public static function predictNextPoints(Chart $chart, $predicted_points_count): Chart
     {
         $samples = [];
         $labels = [];

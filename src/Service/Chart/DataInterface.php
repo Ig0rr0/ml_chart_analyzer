@@ -9,7 +9,5 @@ interface DataInterface
 {
     public function loadChart(ChartDto $chart_dto): Chart;
 
-    public function predictNextPoints();
-
-    public function importPieChart();
+    public function predictNextPoints(ChartDto $chart_dto, Chart $chart);
 }

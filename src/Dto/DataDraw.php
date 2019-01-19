@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Chart;
+namespace App\Dto;
 
 use App\Entity\Chart;
 use App\Dto\Chart as ChartDto;
