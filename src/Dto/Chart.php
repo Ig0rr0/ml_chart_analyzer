@@ -9,52 +9,28 @@ use App\Exception\InputParamMissException;
  */
 final class Chart
 {
-    private $source;
-    private $chart_title;
-    private $x_path;
-    private $y_path;
-    private $x_name;
-    private $y_name;
-    private $predicted_count;
+    public $source;
+    public $chart_title;
+    public $x_path;
+    public $y_path;
+    public $x_name;
+    public $y_name;
+    public $predicted_count;
 
     public static $necessary_params = [
         'source',
         'chart_title',
         'x_path',
+	    'y_path',
         'x_name',
-        'y_path',
         'y_name',
         'predicted_count',
     ];
 
-    public function __construct(
-        string $source,
-        string $chart_title,
-        string $x_path,
-        string $y_path,
-        string $x_name,
-        string $y_name,
-        int $predicted_count
-    ) {
-        $this->source = $source;
-        $this->chart_title = $chart_title;
-        $this->x_path = $x_path;
-        $this->y_path = $y_path;
-        $this->x_name = $x_name;
-        $this->y_name = $y_name;
-        $this->predicted_count = $predicted_count;
-
-        foreach (self::$necessary_params as $necessary_param) {
-            if (empty($this->$necessary_param)) {
-                throw new InputParamMissException($necessary_param.' must be declared');
-            }
-        }
-    }
-
     /**
      * @return string
      */
-    public function getSource(): string
+    public function getSource()
     {
         return $this->source;
     }
@@ -62,7 +38,7 @@ final class Chart
     /**
      * @return string
      */
-    public function getTitle(): string
+    public function getChartTitle()
     {
         return $this->chart_title;
     }
@@ -70,7 +46,7 @@ final class Chart
     /**
      * @return string
      */
-    public function getXPath(): string
+    public function getXPath()
     {
         return $this->x_path;
     }
@@ -78,7 +54,7 @@ final class Chart
     /**
      * @return string
      */
-    public function getYPath(): string
+    public function getYPath()
     {
         return $this->y_path;
     }
@@ -86,7 +62,7 @@ final class Chart
     /**
      * @return string
      */
-    public function getXName(): string
+    public function getXName()
     {
         return $this->x_name;
     }
@@ -94,7 +70,7 @@ final class Chart
     /**
      * @return string
      */
-    public function getYName(): string
+    public function getYName()
     {
         return $this->y_name;
     }

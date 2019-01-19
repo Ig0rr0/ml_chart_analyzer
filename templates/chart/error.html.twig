@@ -2,7 +2,7 @@
 {% block title %}An error occured{% endblock %}
 {% block javascripts %}
     <script>
-        alert('{{ message }}');
+        alert('{{ message|escape }}');
         window.history.back();
     </script>
 {% endblock %}

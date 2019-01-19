@@ -52,7 +52,7 @@ class DataDraw
             ];
         }
 
-        $pieChart->getOptions()->setTitle($chart_dto->getTitle());
+        $pieChart->getOptions()->setTitle($chart_dto->getChartTitle());
         $pieChart->getData()->setArrayToDataTable(
             $chart_array
         );

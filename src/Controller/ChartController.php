@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Form\ImportData;
 
 use GuzzleHttp\Exception\ConnectException;
-use App\Exception\InputParamMissException;
 use App\Exception\EmptyDataException;
+use App\Exception\InputParamMissException;
 
 
 class ChartController extends AbstractController
@@ -38,38 +38,37 @@ class ChartController extends AbstractController
         }
 
         try {
-            $chart_dto = new ChartDto(
-                $form->getViewData()['source'],
-                $form->getViewData()['chart_title'],
-                $form->getViewData()['x_path'],
-                $form->getViewData()['y_path'],
-                $form->getViewData()['x_name'],
-                $form->getViewData()['y_name'],
-                $form->getViewData()['predicted_count']
-            );
+            $chart_dto = $form->getData();
         } catch (InputParamMissException $exception) {
             return $this->render('chart/error.html.twig', [
                 'message' => $exception->getMessage(),
             ]);
+        } catch (\Exception $exception) {
+	        return $this->render('chart/error.html.twig', [
+		        'message' => 'Unknown Error: ' . $exception->getMessage(),
+	        ]);
         }
 
         try {
             $chart = $service->loadChart(
                 $chart_dto
             );
-        } catch (Exception $exception) {
-	        if ($exception instanceof ConnectException OR $exception instanceof EmptyDataException) {
-		        return $this->render('chart/error.html.twig', [
-			        'message' => $exception->getMessage(),
-		        ]);
-	        } else {
-		        return $this->render('chart/error.html.twig', [
-			        'message' => 'Unknown Error: ' . $exception->getMessage()
-		        ]);
-	        }
+        } catch (ConnectException $exception) {
+	        return $this->render('chart/error.html.twig', [
+		        'message' => $exception->getMessage(),
+	        ]);
+        } catch (EmptyDataException $exception) {
+	        return $this->render('chart/error.html.twig', [
+		        'message' => $exception->getMessage(),
+	        ]);
+        } catch (\Exception $exception) {
+	        return $this->render('chart/error.html.twig', [
+		        'message' => 'Unknown Error: ' . $exception->getMessage()
+	        ]);
         }
 
-	    $chart = $service->predictNextPoints($chart_dto,$chart);
+
+	        $chart = $service->predictNextPoints($chart_dto,$chart);
 
         $pieChart =
             DataDraw::importPieChart($chart_dto,$chart);

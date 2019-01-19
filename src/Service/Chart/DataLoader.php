@@ -22,7 +22,6 @@ class DataLoader implements DataInterface
      *
      * @throws \Flow\JSONPath\JSONPathException
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \App\Exception\InputParamMissException
      * @throws \App\Exception\EmptyDataException
      */
     public function loadChart(ChartDto $chart_dto): Chart

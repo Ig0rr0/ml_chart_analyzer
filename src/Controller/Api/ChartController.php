@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api;
 
-use App\Dto\Chart as ChartDto;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use App\Service\Chart\DataInterface;
@@ -14,8 +13,8 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 use GuzzleHttp\Exception\ConnectException;
-use App\Exception\InputParamMissException;
 use App\Exception\EmptyDataException;
+use App\Exception\InputParamMissException;
 
 final class ChartController extends AbstractFOSRestController
 {
@@ -36,39 +35,43 @@ final class ChartController extends AbstractFOSRestController
         }
 
         try {
-            $chart_dto = new ChartDto(
-                $form->getViewData()['source'],
-                $form->getViewData()['chart_title'],
-                $form->getViewData()['x_path'],
-                $form->getViewData()['x_name'],
-                $form->getViewData()['y_path'],
-                $form->getViewData()['y_name'],
-                $form->getViewData()['predicted_count']
-            );
+	        $chart_dto = $form->getData();
         } catch (InputParamMissException $exception) {
             $response = [
                 'error' => $exception->getMessage(),
             ];
 
             return $this->view($response, Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $exception) {
+	        $response = [
+		        'error' => "Unknown error: ".$exception->getMessage(),
+	        ];
+
+	        return $this->view($response, Response::HTTP_BAD_REQUEST);
         }
 
         try {
             $chart = $service->loadChart(
                 $chart_dto
             );
-        } catch (\Exception $exception) {
-	        if ($exception instanceof ConnectException OR $exception instanceof EmptyDataException) {
+        } catch (ConnectException $exception) {
 		        $response = [
 			        'error' => $exception->getMessage(),
 		        ];
-	        } else {
-		        $response = [
+
+	        return $this->view($response, Response::HTTP_BAD_REQUEST);
+        } catch (EmptyDataException $exception) {
+	            $response = [
+			        'error' => $exception->getMessage(),
+		        ];
+
+	        return $this->view($response, Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $exception) {
+	            $response = [
 			        'error' => "Unknown error: ".$exception->getMessage(),
 		        ];
-	        }
 
-            return $this->view($response, Response::HTTP_BAD_REQUEST);
+	        return $this->view($response, Response::HTTP_BAD_REQUEST);
         }
 
         $service->predictNextPoints($chart_dto, $chart);
@@ -84,7 +87,7 @@ final class ChartController extends AbstractFOSRestController
 
         $serializer = new Serializer([$normalizer], [$encoder]);
 
-        $response = $serializer->serialize($service->getChart(), 'json');
+        $response = $serializer->serialize($chart, 'json');
 
         return $this->view(json_decode($response, true), Response::HTTP_OK);
     }
