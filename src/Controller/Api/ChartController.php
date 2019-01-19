@@ -41,7 +41,7 @@ final class ChartController extends AbstractFOSRestController
                 $form->getViewData()['y_name'],
                 $form->getViewData()['predicted_count']
             );
-        } catch (\Exception $exception) {
+        } catch (InputParamMissException $exception) {
             $response = [
                 'error' => $exception->getMessage(),
             ];
@@ -54,9 +54,15 @@ final class ChartController extends AbstractFOSRestController
                 $chart_dto
             );
         } catch (\Exception $exception) {
-            $response = [
-                'error' => $exception->getMessage(),
-            ];
+	        if ($exception instanceof ConnectException OR $exception instanceof EmptyDataException) {
+		        $response = [
+			        'error' => $exception->getMessage(),
+		        ];
+	        } else {
+		        $response = [
+			        'error' => "Unknown error: ".$exception->getMessage(),
+		        ];
+	        }
 
             return $this->view($response, Response::HTTP_BAD_REQUEST);
         }

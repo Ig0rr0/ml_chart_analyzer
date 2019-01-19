@@ -10,6 +10,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use App\Form\ImportData;
 
+use GuzzleHttp\Exception\ConnectException;
+use App\Exception\InputParamMissException;
+use App\Exception\EmptyDataException;
+
+
 class ChartController extends AbstractController
 {
     /**
@@ -42,7 +47,7 @@ class ChartController extends AbstractController
                 $form->getViewData()['y_name'],
                 $form->getViewData()['predicted_count']
             );
-        } catch (\Exception $exception) {
+        } catch (InputParamMissException $exception) {
             return $this->render('chart/error.html.twig', [
                 'message' => $exception->getMessage(),
             ]);
@@ -52,10 +57,16 @@ class ChartController extends AbstractController
             $chart = $service->loadChart(
                 $chart_dto
             );
-        } catch (\Exception $exception) {
-            return $this->render('chart/error.html.twig', [
-                'message' => $exception->getMessage(),
-            ]);
+        } catch (Exception $exception) {
+	        if ($exception instanceof ConnectException OR $exception instanceof EmptyDataException) {
+		        return $this->render('chart/error.html.twig', [
+			        'message' => $exception->getMessage(),
+		        ]);
+	        } else {
+		        return $this->render('chart/error.html.twig', [
+			        'message' => 'Unknown Error: ' . $exception->getMessage()
+		        ]);
+	        }
         }
 
 	    $chart = $service->predictNextPoints($chart_dto,$chart);
