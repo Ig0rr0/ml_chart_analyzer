@@ -12,6 +12,10 @@ This is a diploma for iTea PHP Advanced courses. it:
 
 ![PHP-ML logo](public/images/Json2Chart.jpg)
 
+# Presentation
+
+* https://docs.google.com/presentation/d/1LpZE5g1-DSu-mqt6ZIenloZlR0CfovawTgTRObamtlc/edit?usp=sharing
+
 # PHP Ai engines
 
 * PHP-ML || FANN ?
