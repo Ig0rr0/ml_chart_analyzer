@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Dto\DataDraw;
+use App\DataMapper\ChartDataToLineChart;
 use App\Service\Chart\DataInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -66,19 +66,12 @@ class ChartController extends AbstractController
 
         $chart = $service->predictNextPoints($chart_dto, $chart);
 
-        $pieChart =
-            DataDraw::importPieChart($chart_dto, $chart);
-
-        $pieChart->getOptions()->setHeight(500);
-        $pieChart->getOptions()->setWidth(900);
-        $pieChart->getOptions()->getTitleTextStyle()->setBold(true);
-        $pieChart->getOptions()->getTitleTextStyle()->setColor('#009900');
-        $pieChart->getOptions()->getTitleTextStyle()->setItalic(true);
-        $pieChart->getOptions()->getTitleTextStyle()->setFontName('Arial');
-        $pieChart->getOptions()->getTitleTextStyle()->setFontSize(20);
+        $pieChart = new ChartDataToLineChart();
+	    $pieChart->importPieChart($chart_dto, $chart);
+	    $pieChart->setDefaultView();
 
         return $this->render('chart/view.html.twig', [
-            'piechart' => $pieChart,
+            'piechart' => $pieChart->getPieChart(),
         ]);
     }
 }
